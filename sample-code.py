@@ -160,7 +160,7 @@ INIT_GAME_STATE = {
 }
 
 
-def print_slow(string, speed=0.01):
+def print_slow(string, speed=0.04):
     """This function will write a terminal message in a slow way so that
     the user can keep track of what is happening"""
     for letter in string:
@@ -181,10 +181,10 @@ def start_game():
     """
     Start the game
     """
-    # print_slow(
-    #    """You wake up on a couch and find yourself in a strange division with no windows which you have never been to before, it's a toilet for sure. You don't remember why you are here and what had happened before...\n You feel some unknown danger is approaching and you must get out of the house, NOW!"""
-    # )
-    # get_user_name()
+    print_slow(
+        """You wake up on a couch and find yourself in a strange division with no windows which you have never been to before, it's a toilet for sure. You don't remember why you are here and what had happened before...\n You feel some unknown danger is approaching and you must get out of the house, NOW!"""
+    )
+    get_user_name()
     play_room(game_state["current_room"])
 
 
