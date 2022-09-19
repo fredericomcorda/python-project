@@ -149,12 +149,13 @@ INIT_GAME_STATE = {
 }
 
 
-def print_slow(str):
-    """This function will write a terminal message in a slow way so that the user can keep track of what is happening"""
-    for letter in str:
+def print_slow(string, speed=0.02):
+    """This function will write a terminal message in a slow way so that 
+    the user can keep track of what is happening"""
+    for letter in string:
         sys.stdout.write(letter)
         sys.stdout.flush()
-        time.sleep(0.02)
+        time.sleep(speed)
 
 
 def linebreak():
@@ -167,10 +168,11 @@ def start_game():
     """
     Start the game
     """
-    print_slow("You wake up on a couch and find yourself in a strange division with no windows which you have never been to before, it's a toilet for sure. You don't remember why you are here and what had happened before...\n You feel some unknown danger is approaching and you must get out of the house, NOW!")
+    print_slow("""You wake up on a couch and find yourself in a strange division with no windows which you have never been to before, it's a toilet for sure. You don't remember why you are here and what had happened before...\n You feel some unknown danger is approaching and you must get out of the house, NOW!""")
     play_room(game_state["current_room"])
 
 def get_user_name():
+    """Get player name"""
     print_slow('You need to focus! try to remenber, what is your name?')
     player["name"] = input('Right your name here: ')
 
@@ -192,7 +194,7 @@ def play_room(room):
         elif intended_action == "examine":
             examine_item(input("What would you like to examine?").strip())
         else:
-            print("Not sure what you mean. Type 'explore' or 'examine'.")
+            print_slow("Not sure what you mean. Type 'explore' or 'examine'.")
             play_room(room)
         linebreak()
 
@@ -201,7 +203,7 @@ def explore_room(room):
     Explore a room. List all items belonging to this room.
     """
     items = [i["name"] for i in object_relations[room["name"]]]
-    print("You explore the room. This is " + room["name"] + ". You find " + ", ".join(items))
+    print_slow("You explore the room. This is " + room["name"] + ". You find " + ", ".join(items))
 
 def get_next_room_of_door(door, current_room):
     """
@@ -248,11 +250,11 @@ def examine_item(item_name):
                     output += "You find " + item_found["name"] + "."
                 else:
                     output += "There isn't anything interesting about it."
-            print(output)
+            print_slow(output)
             break
 
     if(output is None):
-        print("The item you requested is not found in the current room.")
+        print_slow("The item you requested is not found in the current room.")
     
     if(next_room and input("Do you want to go to the next room? Ener 'yes' or 'no'").strip() == 'yes'):
         play_room(next_room)
@@ -260,16 +262,6 @@ def examine_item(item_name):
         play_room(current_room)
 
 
-# In[4]:
-
-
 game_state = INIT_GAME_STATE.copy()
 
 start_game()
-
-
-# In[ ]:
-
-
-
-
