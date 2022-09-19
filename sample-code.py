@@ -139,11 +139,14 @@ object_relations = {
     "toilet room": [mirror, door_toilet],
     "living room": [couch, piano, door_livingroom],
     "kitchen room": [balcony, door_kitchen, microwave],
-    "bedroom": [bed, mirror, table],
+    "bedroom": [bed, mirror, table, door_bedroom],
     "bed": [key_bedroom],
     "mirror": [key_toilet],
     "outside": [door_toilet],
-    "door toilet": [toilet_room, outside],
+    "door toilet": [toilet_room, livingroom_room],
+    "door living room": [livingroom_room, bedroom_room],
+    "door bedroom": [bedroom_room, kitchen_room],
+    "door kitchen": [kitchen_room, outside],
     "balcony": [key_kitchen],
     "couch": [key_livingroom],
 }
@@ -182,7 +185,7 @@ def start_game():
     Start the game
     """
     print_slow(
-        """You wake up on a couch and find yourself in a strange division with no windows which you have never been to before, it's a toilet for sure. You don't remember why you are here and what had happened before...\n You feel some unknown danger is approaching and you must get out of the house, NOW!"""
+        "You wake up on a couch and find yourself in a strange division with no windows which you have never been to before, it's a toilet for sure. You don't remember why you are here and what had happened before...\n You feel some unknown danger is approaching and you must get out of the house, NOW!"
     )
     get_user_name()
     play_room(game_state["current_room"])
@@ -190,7 +193,7 @@ def start_game():
 
 def get_user_name():
     """Get player name"""
-    print_slow("You need to focus! try to remenber, what is your name?")
+    print_slow("You need to focus! try to remember, what is your name?")
     player["name"] = input("Right your name here: ")
     print_slow(
         f"Yes! my name is {player['name']}! \n Now I need to get out of here!!!")
@@ -237,7 +240,7 @@ def explore_room(room):
     """
     items = [i["name"] for i in object_relations[room["name"]]]
     print_slow(
-        f"Let's explore the {room['name']}. I can see {', '.join(items)}. I should examine them... \n"
+        f"\nLet me explore the {room['name']}. I can see {', '.join(items)}. I should examine them... \n"
     )
 
 
@@ -246,10 +249,12 @@ def get_next_room_of_door(door, current_room):
     From object_relations, find the two rooms connected to the given door.
     Return the room that is not the current_room.
     """
+    print(door, current_room)
     connected_rooms = object_relations[door["name"]]
     for room in connected_rooms:
         if not current_room == room:
             return room
+    return None
 
 
 def examine_item(item_name):
@@ -280,14 +285,10 @@ def examine_item(item_name):
                 else:
                     output += "The door is locked and I don't have the key... dammit! I need to examine more objects!"
             else:
-                if (
-                    item["name"] in object_relations
-                    and len(object_relations[item["name"]]) > 0
-                ):
+                if item["name"] in object_relations and len(object_relations[item["name"]]) > 0:
                     item_found = object_relations[item["name"]].pop()
                     game_state["keys_collected"].append(item_found)
-                    output += f"Yes! I've found {item_found['name']}. I need to go to the door next!"
-                    next_room = all_rooms[1]
+                    output += f"Yes! I've found {item_found['name']}, it must be! I need to go to the door and get out!\n"
                 else:
                     output += "I couldn't find anything interesting here..."
             print_slow(output)
@@ -295,11 +296,7 @@ def examine_item(item_name):
     if output is None:
         print_slow(
             f"Hm I can't find a {item_name} in this room... have I spell it wrong?")
-    if (
-        next_room
-        and input("Should I go to the next room? Enter 'yes' or 'no'").strip() == "yes"
-    ):
-        del all_rooms[0]
+    if next_room and input("Should I go to the next room? Enter 'yes' or 'no': ").strip() == "yes":
         play_room(next_room)
     else:
         play_room(current_room, new_room=False)
