@@ -45,6 +45,11 @@ bedroom_room = {
     "type": "room",
 }
 
+teddy_bear = {
+    "name": "teddy bear",
+    "type": "furniture",
+}
+
 door_bedroom = {
     "name": "bedroom door",
     "type": "door",
@@ -54,6 +59,11 @@ key_bedroom = {
     "name": "key for bedroom",
     "type": "key",
     "target": door_bedroom,
+}
+
+plant = {
+    "name": "plant",
+    "type": "furniture",
 }
 
 bed = {
@@ -147,7 +157,6 @@ all_doors = [door_toilet, door_bedroom, door_livingroom, door_kitchen]
 
 object_relations = {
     "toilet room": [mirror, door_toilet],
-
     "living room": [couch, television, book_shelf, flower_pot, door_livingroom, door_toilet],
     "kitchen": [balcony, door_kitchen, microwave],
     "bedroom": [bed, mirror, table, door_bedroom],
@@ -218,6 +227,7 @@ def play_room(room, new_room=True):
     If it is, the game will end with success. Otherwise, let player either
     explore (list all items in this room) or examine an item found here.
     """
+    # def 
     if player["current_room"] is None:
         player["current_room"] = all_rooms[0]
     game_state["current_room"] = room
@@ -252,9 +262,17 @@ def explore_room(room):
     Explore a room. List all items belonging to this room.
     """
     items = [i["name"] for i in object_relations[room["name"]]]
+    index_elements = [i+1 for i in range(len(object_relations[room["name"]]))]
+    combination = list(zip(index_elements, items))
+    list_items = str(combination).replace("[", "").replace("]","")
     print_slow(
-        f"\nLet me explore the {room['name']}. I can see {', '.join(items)}. I should examine them... \n"
+    #old code    f"\nLet me explore the {room['name']}. I can see {', '.join(items)}. I should examine them... \n"
+        f"\nLet me explore the {room['name']}. I can see {list_items}. I should examine them... \n"
     )
+    selection = int(input('Write the number of the object to examine: ')) - 1
+    print(f'you have selected {combination[selection][1]}')
+    input()
+
 
 
 def get_next_room_of_door(door, current_room):
