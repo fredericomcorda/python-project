@@ -5,7 +5,7 @@
 import sys
 import time
 import os
-
+from pygame import mixer
 
 # Player
 
@@ -147,15 +147,18 @@ all_doors = [door_toilet, door_bedroom, door_livingroom, door_kitchen]
 
 object_relations = {
     "toilet room": [mirror, door_toilet],
-    "living room": [couch, television, book_shelf, flower_pot, door_livingroom],
+
+    "living room": [couch, television, book_shelf, flower_pot, door_livingroom, door_toilet],
     "kitchen": [balcony, door_kitchen, microwave],
     "bedroom": [bed, mirror, table, door_bedroom],
     "bed": [key_bedroom],
     "mirror": [key_toilet],
+    "balcony": [key_kitchen],
+    "couch": [key_livingroom],
     "outside": [door_toilet],
     "toilet door": [toilet_room, livingroom_room],
     "living room door": [livingroom_room, bedroom_room],
-    "bed room door": [bedroom_room, kitchen_room],
+    "bedroom door": [bedroom_room, kitchen_room],
     "kitchen door": [kitchen_room, outside],
     "balcony": [key_kitchen],
     "book shelf": [key_livingroom],
@@ -173,7 +176,7 @@ INIT_GAME_STATE = {
 }
 
 
-def print_slow(string, speed=0.04):
+def print_slow(string, speed=0.01):                 #added
     """This function will write a terminal message in a slow way so that
     the user can keep track of what is happening"""
     for letter in string:
@@ -197,7 +200,7 @@ def start_game():
     print_slow(
         "You wake up on the floor and find yourself in a strange room with no windows, where you have never been before, it's a toilet room for sure. You don't remember why you are here and what had happened before...\n You feel some unknown danger is approaching and you must try get out, NOW!"
     )
-    get_user_name()
+    #get_user_name()
     play_room(game_state["current_room"])
 
 
@@ -259,7 +262,6 @@ def get_next_room_of_door(door, current_room):
     From object_relations, find the two rooms connected to the given door.
     Return the room that is not the current_room.
     """
-    print(door, current_room)
     connected_rooms = object_relations[door["name"]]
     for room in connected_rooms:
         if not current_room == room:
@@ -294,6 +296,8 @@ def examine_item(item_name):
                     next_room = get_next_room_of_door(item, current_room)
                 else:
                     output += "This door is locked and I don't have the necessary key... dammit! I need to examine more objects!"
+                    # play_sound("door_locked.wav", 1)
+
             else:
                 if item["name"] in object_relations and len(object_relations[item["name"]]) > 0:
                     item_found = object_relations[item["name"]].pop()
@@ -307,12 +311,33 @@ def examine_item(item_name):
         print_slow(
             f"Hm I can't find a {item_name} in this room... did I spell it wrong?")
     if next_room and input("Should I go to the next room? Enter 'yes' or 'no': ").strip() == "yes":
+        # play_sound("door_open.wav", 2)
         play_room(next_room)
     else:
-        play_room(current_room, new_room=False)
+        play_room(current_room)
+
+
+# def play_sound(file="ambient.wav", channel=0, loop=False):
+#     if loop is True: 
+#         mixer.Channel(channel).play(mixer.Sound(f'sound\{file}'), loops=-1)
+#         return
+#     mixer.Channel(channel).play(mixer.Sound(f'sound\{file}'))
+#     return
+
 
 
 game_state = INIT_GAME_STATE.copy()
 
+# hide the support prompt
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
+
+# clear the terminal
 os.system("cls" if os.name == "nt" else "clear")
+
+# Iniciate mixer for audio
+mixer.init()
+
+
+# play_sound(loop=True)
+
 start_game()
