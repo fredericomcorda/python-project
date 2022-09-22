@@ -23,7 +23,7 @@ toilet_room = {
 }
 
 door_toilet = {
-    "name": "door toilet",
+    "name": "toilet door",
     "type": "door",
 }
 
@@ -46,7 +46,7 @@ bedroom_room = {
 }
 
 door_bedroom = {
-    "name": "door bedroom",
+    "name": "bedroom door",
     "type": "door",
 }
 
@@ -76,7 +76,7 @@ livingroom_room = {
 }
 
 door_livingroom = {
-    "name": "door living room",
+    "name": "living room door",
     "type": "door",
 }
 
@@ -86,8 +86,8 @@ key_livingroom = {
     "target": door_livingroom,
 }
 
-piano = {
-    "name": "piano",
+book_shelf = {
+    "name": "book shelf",
     "type": "furniture",
 }
 
@@ -95,12 +95,22 @@ couch = {
     "name": "couch",
     "type": "furniture",
 }
+
+television = {
+    "name": "television",
+    "type": "furniture",
+}
+
+flower_pot = {
+    "name": "flower pot",
+    "type": "furniture",
+}
 ##########
 
 # Kitchen
 
 kitchen_room = {
-    "name": "kitchen room",
+    "name": "kitchen",
     "type": "room",
 }
 door_kitchen = {
@@ -137,18 +147,18 @@ all_doors = [door_toilet, door_bedroom, door_livingroom, door_kitchen]
 
 object_relations = {
     "toilet room": [mirror, door_toilet],
-    "living room": [couch, piano, door_livingroom],
-    "kitchen room": [balcony, door_kitchen, microwave],
+    "living room": [couch, television, book_shelf, flower_pot, door_livingroom],
+    "kitchen": [balcony, door_kitchen, microwave],
     "bedroom": [bed, mirror, table, door_bedroom],
     "bed": [key_bedroom],
     "mirror": [key_toilet],
     "outside": [door_toilet],
-    "door toilet": [toilet_room, livingroom_room],
-    "door living room": [livingroom_room, bedroom_room],
-    "door bedroom": [bedroom_room, kitchen_room],
-    "door kitchen": [kitchen_room, outside],
+    "toilet door": [toilet_room, livingroom_room],
+    "living room door": [livingroom_room, bedroom_room],
+    "bed room door": [bedroom_room, kitchen_room],
+    "kitchen door": [kitchen_room, outside],
     "balcony": [key_kitchen],
-    "couch": [key_livingroom],
+    "book shelf": [key_livingroom],
 }
 
 # define game state. Do not directly change this dict.
@@ -185,7 +195,7 @@ def start_game():
     Start the game
     """
     print_slow(
-        "You wake up on a couch and find yourself in a strange division with no windows which you have never been to before, it's a toilet for sure. You don't remember why you are here and what had happened before...\n You feel some unknown danger is approaching and you must get out of the house, NOW!"
+        "You wake up on the floor and find yourself in a strange room with no windows, where you have never been before, it's a toilet room for sure. You don't remember why you are here and what had happened before...\n You feel some unknown danger is approaching and you must try get out, NOW!"
     )
     get_user_name()
     play_room(game_state["current_room"])
@@ -193,10 +203,10 @@ def start_game():
 
 def get_user_name():
     """Get player name"""
-    print_slow("You need to focus! try to remember, what is your name?")
+    print_slow("You need to focus! Try to remember, what is your name?")
     player["name"] = input("Right your name here: ")
     print_slow(
-        f"Yes! my name is {player['name']}! \n Now I need to get out of here!!!")
+        f"Yes! My name is {player['name']}! \n Now I need to get out of here!!!")
 
 
 def play_room(room, new_room=True):
@@ -213,7 +223,7 @@ def play_room(room, new_room=True):
     else:
         if new_room is True:
             print_slow(f"I think I'm in {room['name']}... looks like it")
-        print_slow(("What should I do? explore? or examine some object?"))
+        print_slow(("What should I do? Explore? Or Examine some object?"))
         intended_action = None
         while intended_action is None:
             intended_action = (
@@ -280,10 +290,10 @@ def examine_item(item_name):
                     if key["target"] == item:
                         have_key = True
                 if have_key:
-                    output += "I have a key to unlock this door!"
+                    output += "I have the key to unlock this door!"
                     next_room = get_next_room_of_door(item, current_room)
                 else:
-                    output += "The door is locked and I don't have the key... dammit! I need to examine more objects!"
+                    output += "This door is locked and I don't have the necessary key... dammit! I need to examine more objects!"
             else:
                 if item["name"] in object_relations and len(object_relations[item["name"]]) > 0:
                     item_found = object_relations[item["name"]].pop()
@@ -295,7 +305,7 @@ def examine_item(item_name):
             break
     if output is None:
         print_slow(
-            f"Hm I can't find a {item_name} in this room... have I spell it wrong?")
+            f"Hm I can't find a {item_name} in this room... did I spell it wrong?")
     if next_room and input("Should I go to the next room? Enter 'yes' or 'no': ").strip() == "yes":
         play_room(next_room)
     else:
