@@ -139,7 +139,7 @@ object_relations = {
     "toilet room": [mirror, door_toilet],
     "living room": [couch, piano, door_livingroom, door_toilet],
     "kitchen room": [balcony, door_kitchen, microwave],
-    "bedroom": [bed, mirror, table, door_bedroom],
+    "bedroom": [bed, mirror, table, door_bedroom, door_livingroom],
     "bed": [key_bedroom],
     "mirror": [key_toilet],
     "balcony": [key_kitchen],
