@@ -6,6 +6,7 @@ import sys
 import time
 import os
 from pygame import mixer
+import minigame as tuna
 
 # Player
 
@@ -308,13 +309,16 @@ def examine_item(item_name):
                 have_key = False
                 for key in game_state["keys_collected"]:
                     if key["target"] == item:
-                        have_key = True
+                        if tuna.minigame():
+                            have_key = True
+                        else:
+                            print_slow("oh no it's not the correct answer")
                 if have_key:
                     output += "I have the key to unlock this door!"
                     next_room = get_next_room_of_door(item, current_room)
                 else:
                     output += "This door is locked and I don't have the necessary key... dammit! I need to examine more objects!"
-                    # play_sound("door_locked.wav", 1)
+                    play_sound("door_locked.wav", 1)
 
             else:
                 if item["name"] in object_relations and len(object_relations[item["name"]]) > 0:
@@ -329,22 +333,25 @@ def examine_item(item_name):
         print_slow(
             f"Hm I can't find a {item_name} in this room... did I spell it wrong?")
     if next_room and input("Should I go to the next room? Enter 'yes' or 'no': ").strip() == "yes":
-        # play_sound("door_open.wav", 2)
+        play_sound("door_open.wav", 2)
         play_room(next_room)
     else:
         play_room(current_room)
 
 
-# def play_sound(file="ambient.wav", channel=0, loop=False):
-#     if loop is True: 
-#         mixer.Channel(channel).play(mixer.Sound(f'sound\{file}'), loops=-1)
-#         return
-#     mixer.Channel(channel).play(mixer.Sound(f'sound\{file}'))
-#     return
+def play_sound(file="ambient.wav", channel=0, loop=False):
+    if loop is True: 
+        mixer.Channel(channel).play(mixer.Sound(f'{path}/sound/{file}'), loops=-1)
+        return
+    mixer.Channel(channel).play(mixer.Sound(f'{path}/sound/{file}'))
+    return
 
 
 
 game_state = INIT_GAME_STATE.copy()
+
+# get path
+path = os.path.dirname(__file__)
 
 # hide the support prompt
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
@@ -356,6 +363,6 @@ os.system("cls" if os.name == "nt" else "clear")
 mixer.init()
 
 
-# play_sound(loop=True)
+play_sound(loop=True)
 
 start_game()
