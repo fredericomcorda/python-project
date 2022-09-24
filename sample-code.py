@@ -6,6 +6,7 @@ import sys
 import time
 import os
 from pygame import mixer
+import minigame as tuna
 
 # Player
 
@@ -45,6 +46,11 @@ bedroom_room = {
     "type": "room",
 }
 
+teddy_bear = {
+    "name": "teddy bear",
+    "type": "furniture",
+}
+
 door_bedroom = {
     "name": "bedroom door",
     "type": "door",
@@ -54,6 +60,11 @@ key_bedroom = {
     "name": "key for bedroom",
     "type": "key",
     "target": door_bedroom,
+}
+
+plant = {
+    "name": "plant",
+    "type": "furniture",
 }
 
 bed = {
@@ -114,7 +125,7 @@ kitchen_room = {
     "type": "room",
 }
 door_kitchen = {
-    "name": "door kitchen",
+    "name": "kitchen door",
     "type": "door",
 }
 
@@ -147,7 +158,6 @@ all_doors = [door_toilet, door_bedroom, door_livingroom, door_kitchen]
 
 object_relations = {
     "toilet room": [mirror, door_toilet],
-
     "living room": [couch, television, book_shelf, flower_pot, door_livingroom, door_toilet],
     "kitchen": [balcony, door_kitchen, microwave],
     "bedroom": [bed, mirror, table, door_bedroom],
@@ -176,7 +186,7 @@ INIT_GAME_STATE = {
 }
 
 
-def print_slow(string, speed=0.01):                 #added
+def print_slow(string, speed=0.04):  # added
     """This function will write a terminal message in a slow way so that
     the user can keep track of what is happening"""
     for letter in string:
@@ -200,7 +210,7 @@ def start_game():
     print_slow(
         "You wake up on the floor and find yourself in a strange room with no windows, where you have never been before, it's a toilet room for sure. You don't remember why you are here and what had happened before...\n You feel some unknown danger is approaching and you must try get out, NOW!"
     )
-    #get_user_name()
+    # get_user_name()
     play_room(game_state["current_room"])
 
 
@@ -218,6 +228,7 @@ def play_room(room, new_room=True):
     If it is, the game will end with success. Otherwise, let player either
     explore (list all items in this room) or examine an item found here.
     """
+    # def
     if player["current_room"] is None:
         player["current_room"] = all_rooms[0]
     game_state["current_room"] = room
@@ -252,9 +263,16 @@ def explore_room(room):
     Explore a room. List all items belonging to this room.
     """
     items = [i["name"] for i in object_relations[room["name"]]]
+    # index_elements = [i+1 for i in range(len(object_relations[room["name"]]))]
+    # combination = list(zip(index_elements, items))
+    # list_items = str(combination).replace("[", "").replace("]","")
     print_slow(
         f"\nLet me explore the {room['name']}. I can see {', '.join(items)}. I should examine them... \n"
+        #    f"\nLet me explore the {room['name']}. I can see {list_items}. I should examine them... \n"
     )
+    # selection = int(input('Write the number of the object to examine: ')) - 1
+    # print(f'you have selected {combination[selection][1]}')
+    # input()
 
 
 def get_next_room_of_door(door, current_room):
@@ -290,19 +308,25 @@ def examine_item(item_name):
                 have_key = False
                 for key in game_state["keys_collected"]:
                     if key["target"] == item:
+                        # if tuna.minigame():
                         have_key = True
+                        # else:
+                        #    print_slow("oh no it's not the correct answer")
                 if have_key:
                     output += "I have the key to unlock this door!"
                     next_room = get_next_room_of_door(item, current_room)
                 else:
                     output += "This door is locked and I don't have the necessary key... dammit! I need to examine more objects!"
-                    # play_sound("door_locked.wav", 1)
-
+                    play_sound("door_locked.wav", 1)
             else:
                 if item["name"] in object_relations and len(object_relations[item["name"]]) > 0:
-                    item_found = object_relations[item["name"]].pop()
-                    game_state["keys_collected"].append(item_found)
-                    output += f"Yes! I've found {item_found['name']}, it must be! I need to go to the door and get out!\n"
+                    if tuna.minigame():
+                        have_key = True
+                        item_found = object_relations[item["name"]].pop()
+                        game_state["keys_collected"].append(item_found)
+                        output += f"Yes! I've found {item_found['name']}, it must be! I need to go to the door and get out!\n"
+                    else:
+                        print_slow("oh no it's not the correct answer")
                 else:
                     output += "I couldn't find anything interesting here..."
             print_slow(output)
@@ -311,22 +335,25 @@ def examine_item(item_name):
         print_slow(
             f"Hm I can't find a {item_name} in this room... did I spell it wrong?")
     if next_room and input("Should I go to the next room? Enter 'yes' or 'no': ").strip() == "yes":
-        # play_sound("door_open.wav", 2)
+        play_sound("door_open.wav", 2)
         play_room(next_room)
     else:
         play_room(current_room)
 
 
-# def play_sound(file="ambient.wav", channel=0, loop=False):
-#     if loop is True: 
-#         mixer.Channel(channel).play(mixer.Sound(f'sound\{file}'), loops=-1)
-#         return
-#     mixer.Channel(channel).play(mixer.Sound(f'sound\{file}'))
-#     return
-
+def play_sound(file="ambient.wav", channel=0, loop=False):
+    if loop is True:
+        mixer.Channel(channel).play(
+            mixer.Sound(f'{path}/sound/{file}'), loops=-1)
+        return
+    mixer.Channel(channel).play(mixer.Sound(f'{path}/sound/{file}'))
+    return
 
 
 game_state = INIT_GAME_STATE.copy()
+
+# get path
+path = os.path.dirname(__file__)
 
 # hide the support prompt
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
@@ -338,6 +365,15 @@ os.system("cls" if os.name == "nt" else "clear")
 mixer.init()
 
 
-# play_sound(loop=True)
+play_sound(loop=True)
 
 start_game()
+
+def the_end():
+    print('Congrats! you have finished the game and you have exit the house!')
+    print_slow('lets see the hightscores...')
+    print_slow("write 'exit' to exit the game")
+    if (input()).lower() == "exit":
+        exit()
+
+the_end()
