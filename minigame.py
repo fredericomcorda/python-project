@@ -16,6 +16,15 @@ Original file is located at
 
 #the dict is divided with the number of the question, the question and then the answer
 import random
+import sys, time
+
+def print_slow(string, speed=0.01):                 #added
+    """This function will write a terminal message in a slow way so that
+    the user can keep track of what is happening"""
+    for letter in string:
+        sys.stdout.write(letter)
+        sys.stdout.flush()
+        time.sleep(speed)
 
 def minigame():
   dict_minigame = {
@@ -39,13 +48,13 @@ def minigame():
     question_number = random.randint(1,13)
     #variable that will receive a random number 
 
-    print("To open this door you must answer a question....")
+    print_slow("\nThis object has a key! but I need to answer a question to get it....\n")
 
     question = dict_minigame[str(question_number)][0]
     answer = dict_minigame[str(question_number)][1]
     #given the random number, u gotta turn it into a string to access the dict that corresponds to the question with the given number and answer
 
-    print(question)
+    print_slow(question)
     user_answer = input("")
 
     #checks if the users anser matches the answer for the question
