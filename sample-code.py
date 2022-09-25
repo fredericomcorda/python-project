@@ -7,6 +7,7 @@ import time
 import os
 from pygame import mixer
 import minigame as tuna
+import highscore as hs
 
 # Player
 
@@ -186,13 +187,18 @@ INIT_GAME_STATE = {
 }
 
 
-def print_slow(string, speed=0.04):  # added
+def print_slow(string, speed=0.01, color=None):  # added
     """This function will write a terminal message in a slow way so that
     the user can keep track of what is happening"""
+    if color == "red":
+        print('\x1b[0;37;41m')
+    elif color == "gree":
+        print('\x1b[7;30;42')
     for letter in string:
         sys.stdout.write(letter)
         sys.stdout.flush()
         time.sleep(speed)
+    print('\x1b[0m')
     linebreak()
 
 
@@ -209,7 +215,7 @@ def start_game():
     """
     print_slow(
         "You wake up on the floor and find yourself in a strange room with no windows, where you have never been before, it's a toilet room for sure. You don't remember why you are here and what had happened before...\n You feel some unknown danger is approaching and you must try get out, NOW!"
-    )
+    , color="red")
     # get_user_name()
     play_room(game_state["current_room"])
 
@@ -236,20 +242,20 @@ def play_room(room, new_room=True):
         print_slow("\nYou made it! You escaped the house!")
     else:
         if new_room is True:
-            print_slow(f"I think I'm in {room['name']}... looks like it")
-        print_slow(("What should I do? Explore? Or Examine some object?"))
+            print_slow(f"Ok, I'm in {room['name']}...")
+        print_slow(("What should I do now? Explore? Or Examine some object?"))
         intended_action = None
         while intended_action is None:
             intended_action = (
                 input(
-                    "Write 'Explore' to explore all the objects in the room or 'Examine' to examine one of the objects: "
+                    "Write " + "\x1b[0;37;41m" + "'Explore'" + "\x1b[0m" + " to explore all the objects in the room or " + "\x1b[0;37;41m" + "'Examine'" + "\x1b[0m" + " to examine one of the objects: \n"
                 ).strip()
             ).upper()
             if intended_action == "EXPLORE":
                 explore_room(room)
                 play_room(room, new_room=False)
             elif intended_action == "EXAMINE":
-                print_slow("What should I examine?")
+                print_slow("\nWhat should I examine?")
                 examine_item(
                     input("Write the object name to examine: ").strip())
             else:
@@ -303,7 +309,7 @@ def examine_item(item_name):
     output = None
     for item in object_relations[current_room["name"]]:
         if item["name"] == item_name:
-            output = "Let's see what I can find in this " + item_name + ". "
+            output = "Let me check " + item_name + ". "
             if item["type"] == "door":
                 have_key = False
                 for key in game_state["keys_collected"]:
@@ -324,11 +330,11 @@ def examine_item(item_name):
                         have_key = True
                         item_found = object_relations[item["name"]].pop()
                         game_state["keys_collected"].append(item_found)
-                        output += f"Yes! I've found {item_found['name']}, it must be! I need to go to the door and get out!\n"
+                        output = f"\nCorrect! I've found {item_found['name']}! it must the door key! I need to go to the door and get out!\n"
                     else:
                         print_slow("oh no it's not the correct answer")
                 else:
-                    output += "I couldn't find anything interesting here..."
+                    output += "I couldn't find anything here..."
             print_slow(output)
             break
     if output is None:
@@ -349,6 +355,17 @@ def play_sound(file="ambient.wav", channel=0, loop=False):
     mixer.Channel(channel).play(mixer.Sound(f'{path}/sound/{file}'))
     return
 
+terminal_colors= {
+    "HEADER": r'\033[95m',
+    "OKBLUE": r'\033[94m',
+    "OKCYAN": r'\033[96m',
+    "OKGREEN": r'\033[92m',
+    "WARNING": r'\033[93m',
+    "FAIL": r'\033[91m',
+    "ENDC": r'\033[0m',
+    "BOLD": r'\033[1m',
+    "UNDERLINE": r'\033[4m'
+}
 
 game_state = INIT_GAME_STATE.copy()
 
@@ -364,16 +381,27 @@ os.system("cls" if os.name == "nt" else "clear")
 # Iniciate mixer for audio
 mixer.init()
 
+# highscore module
+start_time = hs.Timerfuntion("start game")
 
+# start sound
 play_sound(loop=True)
 
 start_game()
 
+time_played = hs.Timerfuntion("end game", start_time)
+
+
 def the_end():
-    print('Congrats! you have finished the game and you have exit the house!')
+    print(
+        f'Congrats! you have finished the game in {time_played} and you have exit the house!')
     print_slow('lets see the hightscores...')
-    print_slow("write 'exit' to exit the game")
-    if (input()).lower() == "exit":
-        exit()
+    print_slow("write 'exit' to exit the game\n")
+    exit_game = False
+    while not exit_game:
+        if (input()).lower() == "exit":
+            exit_game = True
+    exit()
+
 
 the_end()

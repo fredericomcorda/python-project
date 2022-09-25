@@ -54,7 +54,7 @@ def minigame():
     answer = dict_minigame[str(question_number)][1]
     #given the random number, u gotta turn it into a string to access the dict that corresponds to the question with the given number and answer
 
-    print_slow(question)
+    print_slow(f'{question}\n')
     user_answer = input("")
 
     #checks if the users anser matches the answer for the question
@@ -65,12 +65,3 @@ def minigame():
     else:
       if tries < 3:
         return False
-
-def minigame_door_state():
-  
-  #minigame_answer = minigame()
-
-  while minigame_answer is False:
-    minigame_answer = minigame()
-    
-    #door state remains the same
