@@ -20,6 +20,7 @@ def load_dataframe():
 def add_record(user, time):
     score = load_dataframe()
     score.loc[len(score.index)] = [user, time]
-    score.sort_values(by=['points'], ascending=False, inplace=True)
+    score.sort_values(by=['points'], ascending=True, inplace=True)
     score.to_csv("Highscores.csv", index=False)
+    print("less points are better")
     print(score)

@@ -196,7 +196,7 @@ def clear_terminal():
     os.system("cls" if os.name == "nt" else "clear")
 
 
-def print_slow(string, speed=0.01, color=None):  # added
+def print_slow(string, speed=0.04, color=None):  # added
     """This function will write a terminal message in a slow way so that
     the user can keep track of what is happening"""
     print('\x1b[0m')
