@@ -70,3 +70,32 @@ def minigame():
         else:
             if tries < 3:
                 return False
+
+
+def check_name(user):
+    print('\x1b[0m')
+    print("You typed:\n", user, "\nIs that the correct name?\n",
+          "Type 1 - For YES and 2 - For NO")
+    check = input("")
+
+    if check == "1":
+        return True
+    else:
+        return False
+
+    # function that changes the user's name
+    # def change_user(user):
+    #     new_user = input("Type your name again: ")
+    #     return new_user
+    #user = new_user
+    # return user
+
+
+# create a list to store the names of the users that played the game
+list_user = []
+
+# function that stores the names of the users in a list
+
+
+def create_user(user):
+    list_user.append(user.lower())

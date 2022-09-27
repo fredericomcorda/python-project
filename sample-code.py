@@ -3,8 +3,10 @@
 
 # Libraries
 import sys
+from tabnanny import check
 import time
 import os
+from unicodedata import name
 from pygame import mixer
 import minigame as tuna
 import highscore as hs
@@ -14,7 +16,8 @@ import highscore as hs
 player = {
     "name": "unknow",
     "life": 100,
-    "current_room": None
+    "current_room": None,
+    "total time": None
 }
 
 # define rooms and items
@@ -131,7 +134,7 @@ door_kitchen = {
 }
 
 key_kitchen = {
-    "name": "key for toilet",
+    "name": "key for kitchen",
     "type": "key",
     "target": door_kitchen,
 }
@@ -166,7 +169,7 @@ object_relations = {
     "mirror": [key_toilet],
     "balcony": [key_kitchen],
     "couch": [key_livingroom],
-    "outside": [door_toilet],
+    "outside": [outside],
     "toilet door": [toilet_room, livingroom_room],
     "living room door": [livingroom_room, bedroom_room],
     "bedroom door": [bedroom_room, kitchen_room],
@@ -235,6 +238,11 @@ def get_user_name():
     print_slow("You need to focus! Try to remember, what is my name?")
     player["name"] = input("Wright your name here: \n" +
                            "\x1b[0;37;41m").capitalize()
+    while not tuna.check_name(player["name"]):
+        print('\x1b[0m')
+        clear_terminal()
+        get_user_name()
+    print("\x1b[0m")
     print_slow(
         f"Yes! My name is {player['name']}! \n Now I need to get out of here!!!", color="red")
 
@@ -354,8 +362,9 @@ def examine_item(item_name):
     if output is None:
         print_slow(
             f"Hm I can't find a {item_name} in this room... did I spell it wrong?")
-    if next_room and input("Should I go to the next room? Enter 'yes' or 'no': " + "\n" + "\x1b[0;37;41m" ).strip() == "yes":
+    if next_room and input("Should I go to the next room? Enter 'yes' or 'no': " + "\n" + "\x1b[0;37;41m").strip() == "yes":
         play_sound("door_open.wav", 2)
+        time.sleep(1)
         # print('\x1b[0m')
         clear_terminal()
         play_room(next_room)
@@ -395,13 +404,16 @@ play_sound(loop=True)
 
 start_game()
 
-time_played = hs.Timerfuntion("end game", start_time)
+# game is finished
+player['total time'] = hs.Timerfuntion("end game", start_time)
 
 
 def the_end():
     print(
-        f'Congrats! you have finished the game in {time_played} and you have exit the house!')
+        f'Congrats! you have finished the game in {round(player["total time"]/60,1)}m and you have exit the house!')
     print_slow('lets see the hightscores...')
+    hs.add_record(player["name"], player["total time"])
+    print('\n')
     print_slow("write 'exit' to exit the game\n")
     exit_game = False
     while not exit_game:
