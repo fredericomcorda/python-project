@@ -187,19 +187,28 @@ INIT_GAME_STATE = {
 }
 
 
+def clear_terminal():
+    """this function clears the console text"""
+    print('\x1b[0m')
+    os.system("cls" if os.name == "nt" else "clear")
+
+
 def print_slow(string, speed=0.01, color=None):  # added
     """This function will write a terminal message in a slow way so that
     the user can keep track of what is happening"""
+    print('\x1b[0m')
     if color == "red":
-        print('\x1b[0;37;41m')
-    elif color == "gree":
+        print('\x1b[1;37;41m')
+    elif color == "green":
         print('\x1b[7;30;42')
+    else:
+        print('\x1b[0m')
     for letter in string:
         sys.stdout.write(letter)
         sys.stdout.flush()
         time.sleep(speed)
     print('\x1b[0m')
-    linebreak()
+    # linebreak()
 
 
 def linebreak():
@@ -214,18 +223,20 @@ def start_game():
     Start the game
     """
     print_slow(
-        "You wake up on the floor and find yourself in a strange room with no windows, where you have never been before, it's a toilet room for sure. You don't remember why you are here and what had happened before...\n You feel some unknown danger is approaching and you must try get out, NOW!"
-    , color="red")
-    # get_user_name()
+        "You wake up on the floor and find yourself in a strange room with no windows, where you have never been before, it's a toilet room for sure. You don't remember why you are here and what had happened before...", color="red")
+    print_slow(
+        "I feel some unknown danger is approaching and I must try get out, NOW!", color="red")
+    get_user_name()
     play_room(game_state["current_room"])
 
 
 def get_user_name():
     """Get player name"""
-    print_slow("You need to focus! Try to remember, what is your name?")
-    player["name"] = input("Right your name here: ")
+    print_slow("You need to focus! Try to remember, what is my name?")
+    player["name"] = input("Wright your name here: \n" +
+                           "\x1b[0;37;41m").capitalize()
     print_slow(
-        f"Yes! My name is {player['name']}! \n Now I need to get out of here!!!")
+        f"Yes! My name is {player['name']}! \n Now I need to get out of here!!!", color="red")
 
 
 def play_room(room, new_room=True):
@@ -248,7 +259,9 @@ def play_room(room, new_room=True):
         while intended_action is None:
             intended_action = (
                 input(
-                    "Write " + "\x1b[0;37;41m" + "'Explore'" + "\x1b[0m" + " to explore all the objects in the room or " + "\x1b[0;37;41m" + "'Examine'" + "\x1b[0m" + " to examine one of the objects: \n"
+                    "Write " + "\x1b[1;37;41m" + "'Explore'" + "\x1b[0m" + " to explore all the objects in the room or " +
+                    "\x1b[1;37;41m" + "'Examine'" + "\x1b[0m" +
+                    " to examine one of the objects:" + "\x1b[0;37;41m" + "\n"
                 ).strip()
             ).upper()
             if intended_action == "EXPLORE":
@@ -257,7 +270,8 @@ def play_room(room, new_room=True):
             elif intended_action == "EXAMINE":
                 print_slow("\nWhat should I examine?")
                 examine_item(
-                    input("Write the object name to examine: ").strip())
+                    input("Write the object name to examine:" + "\n" + "\x1b[0;37;41m").strip())
+                print("\x1b[0m")
             else:
                 print_slow("I'm confused...")
                 play_room(room, new_room=False)
@@ -273,7 +287,7 @@ def explore_room(room):
     # combination = list(zip(index_elements, items))
     # list_items = str(combination).replace("[", "").replace("]","")
     print_slow(
-        f"\nLet me explore the {room['name']}. I can see {', '.join(items)}. I should examine them... \n"
+        f"\nLet me explore the {room['name']}. I can see the objects \x1b[0;37;41m{','.join(items)}\x1b[0m . I should examine them... \n"
         #    f"\nLet me explore the {room['name']}. I can see {list_items}. I should examine them... \n"
     )
     # selection = int(input('Write the number of the object to examine: ')) - 1
@@ -340,8 +354,10 @@ def examine_item(item_name):
     if output is None:
         print_slow(
             f"Hm I can't find a {item_name} in this room... did I spell it wrong?")
-    if next_room and input("Should I go to the next room? Enter 'yes' or 'no': ").strip() == "yes":
+    if next_room and input("Should I go to the next room? Enter 'yes' or 'no': " + "\n" + "\x1b[0;37;41m" ).strip() == "yes":
         play_sound("door_open.wav", 2)
+        # print('\x1b[0m')
+        clear_terminal()
         play_room(next_room)
     else:
         play_room(current_room)
@@ -355,17 +371,6 @@ def play_sound(file="ambient.wav", channel=0, loop=False):
     mixer.Channel(channel).play(mixer.Sound(f'{path}/sound/{file}'))
     return
 
-terminal_colors= {
-    "HEADER": r'\033[95m',
-    "OKBLUE": r'\033[94m',
-    "OKCYAN": r'\033[96m',
-    "OKGREEN": r'\033[92m',
-    "WARNING": r'\033[93m',
-    "FAIL": r'\033[91m',
-    "ENDC": r'\033[0m',
-    "BOLD": r'\033[1m',
-    "UNDERLINE": r'\033[4m'
-}
 
 game_state = INIT_GAME_STATE.copy()
 
@@ -376,7 +381,8 @@ path = os.path.dirname(__file__)
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 
 # clear the terminal
-os.system("cls" if os.name == "nt" else "clear")
+clear_terminal()
+
 
 # Iniciate mixer for audio
 mixer.init()

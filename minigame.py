@@ -7,18 +7,20 @@ Original file is located at
     https://colab.research.google.com/drive/1pjDXsO2kdW5wgNSCb03wFTOztJnbQs8Q
 """
 
-####code for minigame in the python project
+# code for minigame in the python project
 
-#The minigame will consist in a lock for the door in the Escape Room. 
-#The game will have 3/4 doors and to advance you gotta answer a question.
-#If the answer is correct the door will then unluck.
-#The minigame function simply will provide the user with a random question from a dictionary and the user will have to answer.
+# The minigame will consist in a lock for the door in the Escape Room.
+# The game will have 3/4 doors and to advance you gotta answer a question.
+# If the answer is correct the door will then unluck.
+# The minigame function simply will provide the user with a random question from a dictionary and the user will have to answer.
 
-#the dict is divided with the number of the question, the question and then the answer
+# the dict is divided with the number of the question, the question and then the answer
 import random
-import sys, time
+import sys
+import time
 
-def print_slow(string, speed=0.01):                 #added
+
+def print_slow(string, speed=0.01):  # added
     """This function will write a terminal message in a slow way so that
     the user can keep track of what is happening"""
     for letter in string:
@@ -26,42 +28,45 @@ def print_slow(string, speed=0.01):                 #added
         sys.stdout.flush()
         time.sleep(speed)
 
+
 def minigame():
-  dict_minigame = {
-    "1":["What's tuna's favorite Valorant agent","Viper"],
-    "2":["What is Harry Potter's patronous?","Stag"],
-    "3":["What's the name of the lamp that serves as the mascot for Pixar?","Luxo Jr"],
-    "4":["In the Marvel universe, who is Wanda Maximoff?","Scarlet Witch"],
-    "5":["Who was Ash Ketchun's first pokemon?","Pikachu"],
-    "6":["After Haley Quinn and The Jonker break up, who does Harley starts dating?","Poison Ivy"],
-    "7":["What's Darth's Vader real name?","Anakin Skywalker"],
-    "8":["Vertigo's was an imprit of which comic editor?","DC comics"],
-    "9":["What is the name of the game released in 2022 that got popular because allows the user to play as a cat?","Stray"],
-    "10":["What is the name of the team that won the Valorant Champions in 2022?","LOUD"],
-    "11":["Homelander from The Boys is a reference to what super hero?","Superman"],
-    "12":["Maya Hawke aka Robin from Stranger Things is the daughter of which actress?","Uma Thurman"],
-    "13":["What's tuna's favorite color?","Yellow"],
-}
-  #import of random class to use the method that generates a random integer given a range
-  tries = 0
-  while tries < 3:
-    question_number = random.randint(1,13)
-    #variable that will receive a random number 
+    print('\x1b[0m')
+    dict_minigame = {
+        "1": ["What's tuna's favorite Valorant agent", "Viper"],
+        "2": ["What is Harry Potter's patronous?", "Stag"],
+        "3": ["What's the name of the lamp that serves as the mascot for Pixar?", "Luxo Jr"],
+        "4": ["In the Marvel universe, who is Wanda Maximoff?", "Scarlet Witch"],
+        "5": ["Who was Ash Ketchun's first pokemon?", "Pikachu"],
+        "6": ["After Haley Quinn and The Joker break up, who does Harley starts dating?", "Poison Ivy"],
+        "7": ["What's Darth's Vader real name?", "Anakin Skywalker"],
+        "8": ["Vertigo's was an imprint of which comic editor?", "DC comics"],
+        "9": ["What is the name of the game released in 2022 that got popular because allows the user to play as a cat?", "Stray"],
+        "10": ["What is the name of the team that won the Valorant Champions in 2022?", "LOUD"],
+        "11": ["Homelander from The Boys is a reference to what super hero?", "Superman"],
+        "12": ["Maya Hawke aka Robin from Stranger Things is the daughter of which actress?", "Uma Thurman"],
+        "13": ["What's tuna's favorite color?", "Yellow"],
+    }
+    # import of random class to use the method that generates a random integer given a range
+    tries = 0
+    while tries < 3:
+        question_number = random.randint(1, 13)
+        # variable that will receive a random number
 
-    print_slow("\nThis object has a key! but I need to answer a question to get it....\n")
+        print_slow(
+            "\nThis object has a key! but I need to answer a question to get it....\n")
 
-    question = dict_minigame[str(question_number)][0]
-    answer = dict_minigame[str(question_number)][1]
-    #given the random number, u gotta turn it into a string to access the dict that corresponds to the question with the given number and answer
+        question = dict_minigame[str(question_number)][0]
+        answer = dict_minigame[str(question_number)][1]
+        # given the random number, u gotta turn it into a string to access the dict that corresponds to the question with the given number and answer
 
-    print_slow(f'{question}\n')
-    user_answer = input("")
+        print_slow(f'{question}\n')
+        user_answer = input("")
 
-    #checks if the users anser matches the answer for the question
-    #lower method was used so the answer is not case sensitive
-    #method returns if the user got the answer right or wrong
-    if user_answer.lower() == answer.lower():
-      return True
-    else:
-      if tries < 3:
-        return False
+        # checks if the users anser matches the answer for the question
+        # lower method was used so the answer is not case sensitive
+        # method returns if the user got the answer right or wrong
+        if user_answer.lower() == answer.lower():
+            return True
+        else:
+            if tries < 3:
+                return False
