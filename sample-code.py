@@ -3,13 +3,17 @@
 
 # Libraries
 import sys
-from tabnanny import check
 import time
 import os
-from unicodedata import name
 from pygame import mixer
 import minigame as tuna
 import highscore as hs
+import pyautogui as pg
+
+os.system("title _-+[ O Nome do Jogo - Escape Room ]+-_")
+time.sleep(1)
+
+pg.getWindowsWithTitle("O Nome do Jogo - Escape Room")[0].maximize()
 
 # Player
 
@@ -196,7 +200,7 @@ def clear_terminal():
     os.system("cls" if os.name == "nt" else "clear")
 
 
-def print_slow(string, speed=0.04, color=None):  # added
+def print_slow(string, speed=0.06, color=None):  # added
     """This function will write a terminal message in a slow way so that
     the user can keep track of what is happening"""
     print('\x1b[0m')
@@ -226,7 +230,7 @@ def start_game():
     Start the game
     """
     print_slow(
-        "You wake up on the floor and find yourself in a strange room with no windows, where you have never been before, it's a toilet room for sure. You don't remember why you are here and what had happened before...", color="red")
+        "You wake up on the floor and find yourself in a strange room with no windows, where you have never been before, it seems to be a toilet room for sure. \nYou don't remember why you are here and what had happened before...", color="red")
     print_slow(
         "I feel some unknown danger is approaching and I must try get out, NOW!", color="red")
     get_user_name()
@@ -236,7 +240,7 @@ def start_game():
 def get_user_name():
     """Get player name"""
     print_slow("You need to focus! Try to remember, what is my name?")
-    player["name"] = input("Wright your name here: \n" +
+    player["name"] = input("Write your name here: \n" +
                            "\x1b[0;37;41m").capitalize()
     while not tuna.check_name(player["name"]):
         print('\x1b[0m')
@@ -409,7 +413,7 @@ player['total time'] = hs.Timerfuntion("end game", start_time)
 
 
 def the_end():
-    print(
+    print_slow(
         f'Congrats! you have finished the game in {round(player["total time"]/60,1)}m and you have exit the house!')
     print_slow('lets see the hightscores...')
     hs.add_record(player["name"], player["total time"])

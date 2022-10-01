@@ -22,5 +22,5 @@ def add_record(user, time):
     score.loc[len(score.index)] = [user, time]
     score.sort_values(by=['points'], ascending=True, inplace=True)
     score.to_csv("Highscores.csv", index=False)
-    print("less points are better")
+    print("\n\nless points the better")
     print(score)

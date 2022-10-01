@@ -78,7 +78,7 @@ def check_name(user):
           "Type 1 - For YES and 2 - For NO")
     check = input("")
 
-    if check == "1":
+    if check == "1" or check.upper() == "YES":
         return True
     else:
         return False
